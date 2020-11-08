@@ -1,7 +1,10 @@
 /node_modules
 /build
 
+dev.js
+
 .DS_Store
+
 
 rpm-debug.log*
 yarn-debug-kog*
