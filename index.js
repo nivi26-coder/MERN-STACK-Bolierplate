@@ -2,25 +2,41 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cookieparser = require('cookie-parser');
-const {User} = require('./models/User');
+const cookieParser = require('cookie-parser');
+
 const config = require('./config/key');
+const {User} = require('./models/user');
+const {auth} = require('./middleware/auth')
 
 
 mongoose.connect(config.mongoURI,
      { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true }).then(() => console.log('DB is connected'))
                            .catch(err => console.error(err));
 
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-app.use(cookieparser());
+app.use(cookieParser());
+
+app.get("/api/user/auth",auth,(req,res) =>{
+    res.status(200).json({
+        _id:req._id,
+        isAuth:true,
+        email:req.user.email,
+        name:req.user.name,
+        lastname:req.user,lastname,
+        role:req.user.role
+
+    })
+})
 
 app.post("/api/users/register",(req,res) => {
     const user = new User(req.body);
+
     user.save((err,doc) => {
-        if(err) return res.json ({success:false,err})
+        if(err) return res.json ({success:false,err});
         return res.status(200).json({
-            success:true
+            success:true,
+            userData:doc
         });
     });  
 });
